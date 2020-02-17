@@ -1,18 +1,3 @@
-var vids = [];
-vids = document.getElementsByClassName("style-scope ytd-grid-video-renderer");
-
-vids[22].dispatchEvent(new MouseEvent('mouseenter', { 'bubbles': true }));  // idk what bubbles is
-t = vids[22].getElementsByTagName("ytd-thumbnail-overlay-toggle-button-renderer");  // contains the "watch later" and "add to queue" buttons
-
-
-
-
-// keepsake
-mouseover = vids[0].getElementsByClassName("style-scope ytd-thumbnail");
-
-if (el.length > 0) { el[el.length-1].click(); setTimeout(d,500); };
-var mouseover = [];
-
 /*
 *the scope of this is from now going forward*
 foreach scroll
@@ -28,26 +13,53 @@ and then in there:
 ByLine for channel
 isWatched for watched or not
 
-
+    if we encounter 5 music videos in a row that have been viewed, then stop scrolling and adding videos
 */
 
-// scroll first
 
-var vids = [];
-vids = document.getElementsByClassName("style-scope ytd-grid-video-renderer");
+async function addVidsToWatchLater() {
+    channelList = ["Trap Nation", "Cloud Kid", "Proximity"];
 
-for(i = 0; i < vids.length; i+=23) {
-    // check stuff and click 
-    //possibly need var
-    data = vids[i].__dataHost.__data.bylineText.runs[0].text;
-    if(data === "Trap Nation" || data === "Cloud Kid"){
-        //click add to watch later
-    vids[i].dispatchEvent(new MouseEvent('mouseenter', { 'bubbles': true }));  // idk what bubbles is
-    t = vids[i].getElementsByTagName("ytd-thumbnail-overlay-toggle-button-renderer");  // contains the "watch later" and "add to queue" buttons
-    
+    var vids = [];
+    vids = document.getElementsByClassName("style-scope ytd-grid-video-renderer");
+    var vidsLength = 0;
+
+    var watchedCounter = 0;
+    var i = 0;
+
+    while(counter < 5) {
+        window.scrollBy(0,50000);   // scroll down to load in more videos
+
+        vidsLength = vids.length;
+
+        while(vidsLength == vids.length) {      // loop until the new videos are loaded
+
+            await new Promise(r => setTimeout(r, 200));    // sleep for .2 seconds
+            
+            vids = document.getElementsByClassName("style-scope ytd-grid-video-renderer");
+        }
+        
+
+        // loop over all new vidoes 
+        for(i; i < vids.length; i+=23) {
+            
+            channelName = vids[i].__dataHost.__data.bylineText.runs[0].text;       // possibly need var
+
+            if(channelList.includes(channelName)){
+                if(!vids[46].__dataHost.__data.data.isWatched) {  // check if it is 'watched' or not indicated by a red bar across the thumbnail
+                    watchedCounter = 0;     // reset the counter
+                    // click add to watch later
+                    vids[i].dispatchEvent(new MouseEvent('mouseenter', { 'bubbles': true }));  // make the 'watch later' button show up. idk what bubbles is
+                    buttons = vids[i].getElementsByClassName("style-scope ytd-thumbnail-overlay-toggle-button-renderer");
+                    
+                    buttons[2].click()      // add to watch later!
+                }
+                else {
+                    watchedCounter += 1;
+                }
+            }
+            
+        }
     }
 
-    // filter by channel name
-    data.getElementsByTagName("")
 }
-
